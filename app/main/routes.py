@@ -87,3 +87,17 @@ def delete_prompt(id):
     db.session.commit()
     flash("Prompt silindi.", "info")
     return redirect(url_for("main.index"))
+
+
+@main_bp.route("/comment/delete/<int:id>", methods=["POST"])
+@login_required
+def delete_comment(id):
+    comment = db.get_or_404(Comment, id)
+    if comment.user_id != current_user.id:
+        abort(403)
+    prompt_id = comment.prompt_id
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Yorumunuz silindi.", "info")
+    return redirect(url_for("main.detail", id=prompt_id))
+
