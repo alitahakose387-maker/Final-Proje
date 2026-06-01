@@ -33,10 +33,10 @@ class User(UserMixin, db.Model):
 
     # İlişkiler
     prompts: Mapped[list["Prompt"]] = relationship(
-        back_populates="author", lazy="dynamic"
+        back_populates="author", lazy="dynamic", cascade="all, delete-orphan"
     )
     comments: Mapped[list["Comment"]] = relationship(
-        back_populates="author", lazy="dynamic"
+        back_populates="author", lazy="dynamic", cascade="all, delete-orphan"
     )
 
     # Şifre yönetimi

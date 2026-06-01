@@ -1,5 +1,5 @@
 from flask import abort, flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 
 from app import db
 from app.auth import auth_bp
@@ -102,3 +102,15 @@ def logout():
     logout_user()
     flash("Çıkış yaptınız.", "info")
     return redirect(url_for("auth.login"))
+
+
+@auth_bp.route("/delete_account", methods=["POST"])
+@login_required
+def delete_account():
+    user = current_user
+    db.session.delete(user)
+    db.session.commit()
+    logout_user()
+    flash("Hesabınız ve tüm verileriniz başarıyla silindi.", "info")
+    return redirect(url_for("main.index"))
+
