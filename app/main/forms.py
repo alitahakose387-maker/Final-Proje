@@ -19,3 +19,9 @@ class PromptForm(FlaskForm):
         ],
     )
     submit = SubmitField("Paylaş")
+
+
+class CommentForm(FlaskForm):
+    body = TextAreaField("Yorumunuz", validators=[DataRequired(), Length(max=500)])
+    submit = SubmitField("Yorum Yap")
+

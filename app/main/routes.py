@@ -16,10 +16,25 @@ def index():
     return render_template("main/index.html", prompts=prompts)
 
 
-@main_bp.route("/prompt/<int:id>")
+@main_bp.route("/prompt/<int:id>", methods=["GET", "POST"])
 def detail(id):
     prompt = db.get_or_404(Prompt, id)
-    return render_template("main/detail.html", prompt=prompt)
+    form = CommentForm()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("Yorum yapabilmek için giriş yapmalısınız.", "warning")
+            return redirect(url_for("auth.login"))
+        comment = Comment(
+            body=form.body.data, user_id=current_user.id, prompt_id=prompt.id
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash("Yorumunuz başarıyla eklendi.", "success")
+        return redirect(url_for("main.detail", id=prompt.id))
+    comments = prompt.comments.order_by(Comment.created_at.desc()).all()
+    return render_template(
+        "main/detail.html", prompt=prompt, form=form, comments=comments
+    )
 
 
 @main_bp.route("/prompt/new", methods=["GET", "POST"])
