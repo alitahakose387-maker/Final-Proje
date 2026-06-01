@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}PromptHub — Yapay Zeka Prompt Paylaşım Platformu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold mb-3" style="background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <i class="bi bi-stars"></i> PromptHub
+        </h1>
+        <p class="lead text-muted mb-4">
+            Yapay zeka promptlarını keşfet, paylaş ve toplulukla birlikte geliştir.
+        </p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-rocket-takeoff me-1"></i>Hemen Başla
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Giriş Yap
+            </a>
+        {% else %}
+            <p class="text-muted">Hoş geldin, <strong>{{ current_user.username }}</strong>! 🚀</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
