@@ -28,6 +28,8 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, index=True)
     password_hash: Mapped[Optional[str]] = mapped_column(String(256))
     created_at: Mapped[datetime] = mapped_column(default=func.now())
+    is_confirmed: Mapped[bool] = mapped_column(default=False)
+
 
     # İlişkiler
     prompts: Mapped[list["Prompt"]] = relationship(
