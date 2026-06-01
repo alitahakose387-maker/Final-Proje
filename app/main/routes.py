@@ -1,8 +1,73 @@
-from flask import render_template
+from flask import abort, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
+from app import db
 from app.main import main_bp
+from app.main.forms import PromptForm
+from app.models import Prompt
 
 
 @main_bp.route("/")
 def index():
-    return render_template("main/index.html")
+    page = request.args.get("page", 1, type=int)
+    prompts = Prompt.query.order_by(Prompt.created_at.desc()).paginate(
+        page=page, per_page=10, error_out=False
+    )
+    return render_template("main/index.html", prompts=prompts)
+
+
+@main_bp.route("/prompt/<int:id>")
+def detail(id):
+    prompt = db.get_or_404(Prompt, id)
+    return render_template("main/detail.html", prompt=prompt)
+
+
+@main_bp.route("/prompt/new", methods=["GET", "POST"])
+@login_required
+def new_prompt():
+    form = PromptForm()
+    if form.validate_on_submit():
+        prompt = Prompt(
+            title=form.title.data,
+            prompt_text=form.prompt_text.data,
+            ai_tool=form.ai_tool.data,
+            user_id=current_user.id,
+        )
+        db.session.add(prompt)
+        db.session.commit()
+        flash("Promptunuz başarıyla paylaşıldı!", "success")
+        return redirect(url_for("main.detail", id=prompt.id))
+
+    return render_template("main/form.html", form=form, title="Yeni Prompt Paylaş")
+
+
+@main_bp.route("/prompt/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_prompt(id):
+    prompt = db.get_or_404(Prompt, id)
+    if prompt.user_id != current_user.id:
+        abort(403)
+
+    form = PromptForm(obj=prompt)
+    if form.validate_on_submit():
+        prompt.title = form.title.data
+        prompt.prompt_text = form.prompt_text.data
+        prompt.ai_tool = form.ai_tool.data
+        db.session.commit()
+        flash("Prompt başarıyla güncellendi.", "success")
+        return redirect(url_for("main.detail", id=prompt.id))
+
+    return render_template("main/form.html", form=form, title="Promptu Düzenle")
+
+
+@main_bp.route("/prompt/delete/<int:id>", methods=["POST"])
+@login_required
+def delete_prompt(id):
+    prompt = db.get_or_404(Prompt, id)
+    if prompt.user_id != current_user.id:
+        abort(403)
+
+    db.session.delete(prompt)
+    db.session.commit()
+    flash("Prompt silindi.", "info")
+    return redirect(url_for("main.index"))

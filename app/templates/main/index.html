@@ -3,23 +3,130 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="text-center">
+    <!-- Hero -->
+    <div class="text-center mb-5">
         <h1 class="display-4 fw-bold mb-3" style="background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             <i class="bi bi-stars"></i> PromptHub
         </h1>
         <p class="lead text-muted mb-4">
             Yapay zeka promptlarını keşfet, paylaş ve toplulukla birlikte geliştir.
         </p>
-        {% if not current_user.is_authenticated %}
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.new_prompt') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-lg me-1"></i>Yeni Prompt Paylaş
+            </a>
+        {% else %}
             <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-2">
                 <i class="bi bi-rocket-takeoff me-1"></i>Hemen Başla
             </a>
             <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">
                 <i class="bi bi-box-arrow-in-right me-1"></i>Giriş Yap
             </a>
-        {% else %}
-            <p class="text-muted">Hoş geldin, <strong>{{ current_user.username }}</strong>! 🚀</p>
         {% endif %}
     </div>
+
+    <!-- Prompt Listesi -->
+    {% if prompts.items %}
+        <div class="row g-4">
+            {% for prompt in prompts.items %}
+                <div class="col-md-6">
+                    <div class="card h-100 border-0" style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 14px; transition: transform 0.2s, box-shadow 0.2s;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge rounded-pill" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                    {{ prompt.ai_tool }}
+                                </span>
+                                <small class="text-muted">
+                                    <i class="bi bi-chat-dots me-1"></i>{{ prompt.comments.count() }}
+                                </small>
+                            </div>
+                            <h5 class="card-title fw-bold mb-2">
+                                <a href="{{ url_for('main.detail', id=prompt.id) }}" class="text-decoration-none text-white stretched-link">
+                                    {{ prompt.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted small mb-3">
+                                {{ prompt.prompt_text[:120] }}{% if prompt.prompt_text|length > 120 %}...{% endif %}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-person me-1"></i>{{ prompt.author.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>{{ prompt.created_at.strftime('%d.%m.%Y') }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Sayfalama -->
+        {% if prompts.pages > 1 %}
+            <nav class="mt-5" aria-label="Sayfalama">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {{ 'disabled' if not prompts.has_prev }}">
+                        <a class="page-link" href="{{ url_for('main.index', page=prompts.prev_num) }}">
+                            <i class="bi bi-chevron-left"></i> Önceki
+                        </a>
+                    </li>
+                    {% for p in prompts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if p %}
+                            <li class="page-item {{ 'active' if p == prompts.page }}">
+                                <a class="page-link" href="{{ url_for('main.index', page=p) }}">{{ p }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {{ 'disabled' if not prompts.has_next }}">
+                        <a class="page-link" href="{{ url_for('main.index', page=prompts.next_num) }}">
+                            Sonraki <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="text-muted mt-3 fs-5">Henüz prompt paylaşılmamış.</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.new_prompt') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>İlk promptu sen paylaş!
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>
+
+{% block extra_css %}
+<style>
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+    }
+    .page-link {
+        background: rgba(26, 26, 46, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #ccc;
+    }
+    .page-link:hover {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: rgba(102, 126, 234, 0.5);
+        color: #fff;
+    }
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+    }
+    .page-item.disabled .page-link {
+        background: rgba(26, 26, 46, 0.4);
+        border-color: rgba(255, 255, 255, 0.05);
+        color: #555;
+    }
+</style>
+{% endblock %}
 {% endblock %}
