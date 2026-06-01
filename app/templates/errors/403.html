@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Yetkisiz Erişim — PromptHub{% endblock %}
+
+{% block content %}
+<div class="container py-5 my-auto">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6 text-center">
+            <!-- Büyük 403 Numarası -->
+            <h1 class="display-1 fw-extrabold mb-0" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 8rem; font-weight: 800; line-height: 1;">403</h1>
+            
+            <!-- Açıklama Kartı -->
+            <div class="card border-0 p-4 mb-4 mt-2" style="background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 16px;">
+                <h2 class="h3 fw-bold text-light mb-3">Bu Sayfaya Erişim Yetkiniz Yok</h2>
+                <p class="text-muted mb-0">Üzgünüz, bu işlemi gerçekleştirmek veya bu içeriği görüntülemek için gerekli yetkiye sahip değilsiniz.</p>
+            </div>
+            
+            <!-- Yönlendirme Butonu -->
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary px-4 py-2 fw-semibold rounded-pill">
+                <i class="bi bi-house-door me-2"></i>Ana Sayfaya Dön
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -68,7 +68,7 @@
                 <ul class="pagination justify-content-center">
                     <li class="page-item {{ 'disabled' if not prompts.has_prev }}">
                         <a class="page-link" href="{{ url_for('main.index', page=prompts.prev_num) }}">
-                            <i class="bi bi-chevron-left"></i> Önceki
+                            <i class="bi bi-chevron-left"></i> Önceki Sayfa
                         </a>
                     </li>
                     {% for p in prompts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
@@ -82,7 +82,7 @@
                     {% endfor %}
                     <li class="page-item {{ 'disabled' if not prompts.has_next }}">
                         <a class="page-link" href="{{ url_for('main.index', page=prompts.next_num) }}">
-                            Sonraki <i class="bi bi-chevron-right"></i>
+                            Sonraki Sayfa <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                 </ul>
