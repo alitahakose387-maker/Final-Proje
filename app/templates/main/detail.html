@@ -41,7 +41,7 @@
                                 </a>
                                 <form method="POST" action="{{ url_for('main.delete_prompt', id=prompt.id) }}"
                                       onsubmit="return confirm('Bu promptu silmek istediğinize emin misiniz?');">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    {{ form.csrf_token }}
                                     <button type="submit" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-trash me-1"></i>Sil
                                     </button>

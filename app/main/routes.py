@@ -4,7 +4,8 @@ from flask_login import current_user, login_required
 from app import db
 from app.main import main_bp
 from app.main.forms import PromptForm
-from app.models import Prompt
+from app.models import Prompt, Comment
+from app.main.forms import CommentForm
 
 
 @main_bp.route("/")
