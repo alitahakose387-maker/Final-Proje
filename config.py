@@ -19,4 +19,5 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "test-user")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "test-pass")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@prompthub.com")
+    MAIL_SUPPRESS_SEND = os.environ.get("MAIL_SUPPRESS_SEND", "true").lower() in ["true", "on", "1"]
 

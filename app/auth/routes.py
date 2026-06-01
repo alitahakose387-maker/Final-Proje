@@ -28,6 +28,12 @@ def register():
         # Token üret ve aktivasyon maili gönder
         token = generate_confirmation_token(user.email)
         confirm_url = url_for("auth.confirm_email", token=token, _external=True)
+        
+        # Konsola yazdır (Geliştirici için kolaylık)
+        print("\n" + "=" * 80)
+        print(f"Geliştirici Aktivasyon Bağlantısı: {confirm_url}")
+        print("=" * 80 + "\n")
+
         html = render_template(
             "auth/email/activate.html", confirm_url=confirm_url, user=user
         )
